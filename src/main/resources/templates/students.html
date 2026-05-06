@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Sinh viên</title>
+    <!-- Nhúng Bootstrap 5 và FontAwesome để giống giao diện mẫu -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+    <!-- Cụm Tiêu đề và Nút Đăng xuất -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-users"></i> Quản lý Sinh viên</h2>
+        
+        <div class="d-flex align-items-center">
+            <!-- Đã sửa dòng này: Dùng trực tiếp #authentication.name -->
+            <span class="me-3">Xin chào, <b th:text="${username}">Tài khoản</b>!</span>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Thanh tìm kiếm & Nút thêm -->
+    <div class="card p-3 mb-4">
+        <div class="row">
+            <div class="col-md-6 d-flex">
+                <form th:action="@{/students}" method="get" class="d-flex w-100">
+                    <input type="text" name="keyword" class="form-control me-2" placeholder="Tìm kiếm theo tên...">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tìm</button>
+                </form>
+            </div>
+            <div class="col-md-6 text-end">
+                <a th:href="@{/students/add}" class="btn btn-success"><i class="fas fa-plus"></i> Thêm Sinh viên</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng dữ liệu -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Danh sách Sinh viên
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-striped mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>TÊN</th>
+                        <th>TUỔI</th>
+                        <th>EMAIL</th>
+                        <th>GIỚI TÍNH</th>
+                        <th>HÀNH ĐỘNG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="sv : ${students}">
+                        <td th:text="${sv.id}" style="word-break: break-all; max-width: 150px;"></td>
+                        <td th:text="${sv.name}"></td>
+                        <td th:text="${sv.age}"></td>
+                        <td th:text="${sv.email}"></td>
+                        <td th:text="${sv.gender}"></td>
+                        <td>
+                            <a th:href="@{/students/edit/{id}(id=${sv.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Sửa</a>
+                            <a th:href="@{/students/delete/{id}(id=${sv.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')"><i class="fas fa-trash"></i> Xóa</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
