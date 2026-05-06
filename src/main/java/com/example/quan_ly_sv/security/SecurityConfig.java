@@ -12,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Bean dùng để mã hóa mật khẩu (BCrypt)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -21,20 +20,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // Tắt CSRF để không bị lỗi 403 trên Render
+            .csrf(csrf -> csrf.disable())
+            
+            // Cấu hình quyền truy cập
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll() // Cho phép truy cập tự do
-                .anyRequest().authenticated() // Các trang còn lại (như /students) bắt buộc đăng nhập
+                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                .anyRequest().authenticated()
             )
+            
+            // Cấu hình Đăng nhập
             .formLogin(form -> form
-                .loginPage("/login") // Trỏ tới trang đăng nhập tự tạo
-                .defaultSuccessUrl("/students", true) // Đăng nhập thành công vào trang quản lý
+                .loginPage("/login")
+                .defaultSuccessUrl("/students", true)
                 .permitAll()
             )
+            
+            // Cấu hình Đăng xuất
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             );
+
         return http.build();
     }
 }
